@@ -1,0 +1,35 @@
+# Minimal CI workflow for Flask + MySQL
+# See: https://docs.github.com/en/actions/guides/building-and-testing-python
+name: CI Test
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: chronos
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping --silent" --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: mysql+pymysql://root:password@localhost:3306/chronos
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r app/requirements.txt
+      - name: Run tests
+        run: pytest
