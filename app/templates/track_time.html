@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Time - Chronos Time Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Track Time for {{ user.username }}</h1>
+        <form method="POST" action="{{ url_for('track_time', user_id=user.id) }}">
+            <div class="form-group">
+                <label for="project_id">Project:</label>
+                <select id="project_id" name="project_id" required>
+                    {% for project in projects %}
+                    <option value="{{ project.id }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="start_time">Start Time (optional, defaults to now):</label>
+                <input type="datetime-local" id="start_time" name="start_time">
+            </div>
+            <div class="form-group">
+                <label for="end_time">End Time (optional, leave blank if ongoing):</label>
+                <input type="datetime-local" id="end_time" name="end_time">
+            </div>
+            <div class="form-group">
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes"></textarea>
+            </div>
+            <button type="submit">Log Time</button>
+        </form>
+        <a href="{{ url_for('user_detail', user_id=user.id) }}">Back to Dashboard</a>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 

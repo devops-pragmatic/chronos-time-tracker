@@ -3,7 +3,7 @@ import os
 
 def get_database_url():
     """
-    Returns the database URL from environment variables.
-    See: https://12factor.net/config
+    Get the database URL from environment variables or use a default SQLite database for local development.
+    For Docker Compose, set DATABASE_URL to point to MySQL.
     """
-    return os.environ.get("DATABASE_URL", "mysql+pymysql://root:password@db:3306/chronos")
+    return os.getenv("DATABASE_URL", "sqlite:///app.db")

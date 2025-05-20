@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos Time Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Chronos Time Tracker</h1>
+        <p>A lightweight app to track time spent on projects.</p>
+        <div class="nav-buttons">
+            <a href="{{ url_for('register') }}" class="button">Register New User</a>
+        </div>
+        <h2>Registered Users</h2>
+        {% if users %}
+        <ul class="user-list">
+            {% for user in users %}
+            <li>
+                <h3>{{ user.username }}</h3>
+                <p>Email: {{ user.email }}</p>
+                <a href="{{ url_for('user_detail', user_id=user.id) }}" class="button">View Details</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No users registered. Register to get started!</p>
+        {% endif %}
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 

@@ -2,26 +2,28 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
-class Sample(db.Model):
-    """
-    Example model for demonstration. Replace or extend for your assignment.
-    """
-
+class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    username = db.Column(db.String(255), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    time_entries = db.relationship('TimeEntry', backref='user', lazy=True)
+    projects = db.relationship('Project', backref='user', lazy=True)
 
+class Project(db.Model):
+    __tablename__ = 'projects'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    time_entries = db.relationship('TimeEntry', backref='project', lazy=True)
 
-# --- Sample Time Tracker Models ---
-# class Project(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(128), nullable=False)
-#     time_entries = db.relationship('TimeEntry', backref='project', lazy=True)
-#
-# class TimeEntry(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
-#     date = db.Column(db.Date, nullable=False)
-#     hours = db.Column(db.Float, nullable=False)
-#     notes = db.Column(db.String(256))
-# ----------------------------------------------------------------------
+class TimeEntry(db.Model):
+    __tablename__ = 'time_entries'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime)
+    duration = db.Column(db.Integer)  # Duration in seconds
+    notes = db.Column(db.Text)

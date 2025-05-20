@@ -1,17 +1,49 @@
-# Sample time tracker data for guidance only.
-# You can use this as a reference for your own seed/test data.
+from datetime import datetime, timedelta
 
-sample_projects = [
-    {"id": 1, "name": "DevOps Final Project"},
-    {"id": 2, "name": "Documentation"},
-]
+from .models import db, User, Project, TimeEntry
 
-sample_time_entries = [
-    {"id": 1, "project_id": 1, "date": "2024-05-20", "hours": 3.5, "notes": "Initial setup and planning."},
-    {"id": 2, "project_id": 1, "date": "2024-05-21", "hours": 2.0, "notes": "Docker Compose configuration."},
-    {"id": 3, "project_id": 2, "date": "2024-05-21", "hours": 1.0, "notes": "Wrote README and usage docs."},
-]
+def populate_sample_data():
+    """Populate the database with sample data for dev/testing."""
+    # Clear existing data
+    TimeEntry.query.delete()
+    Project.query.delete()
+    User.query.delete()
+    db.session.commit()
 
-# Example usage (not for production):
-# for project in sample_projects:
-#     print(project["name"])
+    # Sample Users
+    user1 = User(username="alice", email="alice@example.com")
+    user2 = User(username="bob", email="bob@example.com")
+    db.session.add(user1)
+    db.session.add(user2)
+    db.session.commit()
+
+    # Sample Projects for Alice
+    project1 = Project(name="Website Redesign", description="Redesigning company website", user_id=user1.id)
+    project2 = Project(name="Database Migration", description="Migrating database to new server", user_id=user1.id)
+    db.session.add(project1)
+    db.session.add(project2)
+    db.session.commit()
+
+    # Sample Time Entries for Alice
+    now = datetime.now()
+    entry1 = TimeEntry(
+        user_id=user1.id,
+        project_id=project1.id,
+        start_time=now - timedelta(hours=5),
+        end_time=now - timedelta(hours=2),
+        duration=10800,  # 3 hours in seconds
+        notes="Initial design mockups"
+    )
+    entry2 = TimeEntry(
+        user_id=user1.id,
+        project_id=project2.id,
+        start_time=now - timedelta(hours=1),
+        end_time=None,
+        duration=0,
+        notes="Setting up new database"
+    )
+    db.session.add(entry1)
+    db.session.add(entry2)
+    db.session.commit()
+
+    print("Sample data populated: 2 users, 2 projects, 2 time entries.")
